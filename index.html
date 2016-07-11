@@ -74,7 +74,7 @@ function format_links(line) {
 }
 
 function display_table(source_tag, columns) {
-    Papa.parse(source_tag + ".csv", {
+    Papa.parse("academiash/" + source_tag + ".csv", {
         download: true,
         header: true,
         complete: function(results, file) {
