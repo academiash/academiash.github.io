@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Basic Page Needs
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta charset="utf-8">
+  <title>sciencesh: sexual harassment in Academia in the US</title>
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <!-- Mobile Specific Metas
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <!-- FONT
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
+
+  <!-- CSS
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/skeleton.css">
+  <link rel="stylesheet" href="css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/footable.standalone.min.css">
+
+
+  <!-- Favicon
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <link rel="icon" type="image/png" href="images/favicon.png">
+
+</head>
+<body>
+
+  <!-- Primary Page Layout
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <div class="container">
+   <h2>Sexual harassment in Academia in the US</h2> 
+    <div class="row">
+      <div class="column">
+        <h4 id="title-faculty">Faculty</h4>
+        <p>Total number of cases: <b id="cases-faculty"></b></p>
+        <table class="table-faculty" data-paging="true" data-filtering="true"  data-sorting="true"></table>
+      </div>
+    </div>
+        <h4>Administrators</h4>
+        <p>Total number of cases: <b id="cases-administrators"></b></p>
+        <table class="table-administrators" data-paging="true" data-filtering="true"  data-sorting="true"></table>
+        <h4>Departments</h4>
+        <p>Total number of cases: <b id="cases-departments"></b></p>
+        <table class="table-departments" data-paging="true" data-filtering="true"  data-sorting="true"></table>
+  </div>
+
+<!-- End Document
+  –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <script src="js/papaparse.min.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="js/footable.min.js"></script>
+<script>
+function format_links(line) {
+    if (line == null) {
+        return null
+    } else {
+        return line.trim().split(/\s+/).map(function(link) {
+            var matches = link.match(/^https?\:\/\/([^\/?#]+)(?:[\/?#]|$)/i);
+            var domain = matches && matches[1];  // domain will be null if no match is found
+            if (domain==null) {
+                return link;
+            } else {
+                return '<a href="' + link + '" >' + domain + '</a>';
+            }
+        }).join(" ");
+     }
+}
+
+function display_table(source_tag, columns) {
+    Papa.parse(source_tag + ".csv", {
+        download: true,
+        header: true,
+        complete: function(results, file) {
+            //console.log("Parsing complete:", results, file);
+                 
+            $('#cases-' + source_tag).text(results.data.slice(0,-1).length);
+            jQuery(function($){
+                $('.table-' + source_tag).footable({
+                "columns": columns,
+                "rows": results.data.slice(0,-1)
+                })
+            });
+        }
+    });
+}
+
+display_table("faculty", [
+               {"name":"year", "title":"Year", "filterable":false},
+               {"name":"category", "title":"Category", "visible":false,"filterable":false},
+               {"name":"name", "title":"Name", "sortable":false},
+               {"name":"department", "title":"Department"},
+               {"name":"institution", "title":"Institution"},
+               {"name":"outcome", "title":"Outcome", "sortable":false},
+               {"name":"links", "title":"Links", "formatter":format_links, "sortable":false}
+            ]
+);
+
+display_table("administrators", [
+           {"name":"year", "title":"Year", "filterable":false},
+           {"name":"category", "title":"Category", "visible":false,"filterable":false},
+           {"name":"name", "title":"Name", "sortable":false},
+           {"name":"position", "title":"Position"},
+           {"name":"institution", "title":"Institution"},
+           {"name":"outcome", "title":"Outcome", "sortable":false},
+           {"name":"links", "title":"Links", "formatter":format_links, "sortable":false}
+        ]
+);
+
+display_table("departments", [
+           {"name":"year", "title":"Year", "filterable":false},
+           {"name":"department", "title":"Department"},
+           {"name":"institution", "title":"Institution"},
+           {"name":"outcome", "title":"Outcome", "sortable":false},
+           {"name":"links", "title":"Links", "formatter":format_links, "sortable":false}
+        ]
+);
+</script>
+</body>
+</html>
